@@ -237,10 +237,13 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 elif motivo:
                     mem.feedback = motivo
                     efecto, fin = "rechazada por guardrail", None
-                    log_evento(f"guardrail: confirmación repetida bloqueada ({_describe(a)})")
+                    log_evento(f"guardrail: {_describe(a)} bloqueada ({motivo.split('.')[0]})")
                 else:
                     efecto, fin = await _ejecutar(a, client, mem)
                     guardia.ejecutada(paso, a)
+                    if a.confirma_cambio and efecto == "ejecutada":
+                        mem.hechos.append(f"paso {paso}: TÚ confirmaste un cambio ({_describe(a)}); un registro "
+                                          "con los datos de la tarea que veas después es tu propio cambio")
                 if fin:
                     estado, resultado = fin
                 elif a.accion not in ("zoom", "wait") and not efecto.startswith("rechazada"):

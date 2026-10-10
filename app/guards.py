@@ -11,9 +11,15 @@ class Guardia:
     """Recuerda la última confirmación para no repetirla sin verificar (evita duplicados)."""
     ultima: tuple[int, int, int] | None = None  # (paso, x, y)
     verificado_desde: bool = True
+    fail_revisado: bool = False
 
     def revisar(self, a: Accion) -> str | None:
         """Devuelve el motivo de rechazo, o None si la acción puede ejecutarse."""
+        if a.accion == "fail" and self.ultima and not self.fail_revisado:
+            self.fail_revisado = True
+            return (f"fail rechazado una vez: en el paso {self.ultima[0]} TÚ confirmaste un cambio. Si el "
+                    "registro que ves ahora tiene los datos de la tarea, es tu propio cambio, no uno "
+                    "preexistente: responde done con verificado=true. Si de verdad falló, repite fail.")
         if a.fase == "verificar" and not a.confirma_cambio:
             self.verificado_desde = True
         if not (a.confirma_cambio and a.accion in ("click", "double_click", "key")):
