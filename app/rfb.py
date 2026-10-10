@@ -110,6 +110,16 @@ class RFBClient:
             raise
         self._reader_task = asyncio.create_task(self._reader())
 
+    async def reconnect(self) -> None:
+        """Cierra lo que quede de la conexión caída y abre una nueva con el mismo escritorio."""
+        try:
+            await self.close()
+        except Exception:
+            pass
+        self._buf, self._error, self._buttons = bytearray(), None, 0
+        self.first_frame = asyncio.Event()
+        await self.connect()
+
     async def _handshake(self) -> None:
         version = await self._read_exact(12)
         if not version.startswith(b"RFB "):

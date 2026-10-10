@@ -11,13 +11,14 @@ from pathlib import Path
 from app import rfb
 from app.guards import Guardia
 from app.llm import LLM, Accion, Resultado
-from app.rfb import RFBClient
+from app.rfb import RFBClient, RFBError
 from app.screen import to_png_b64, wait_stable, zoom
 from app.summary import build_summary, redact
 
 MODAL_RE = re.compile(r"\b(modal|di[aá]logo|aviso|popup|ventana emergente)\b", re.I)
 RUNS = Path(__file__).resolve().parent.parent / "runs"
 MAX_PASOS = 40
+MAX_RECONEXIONES = 2
 ULTIMAS_ACCIONES = 8
 
 SYSTEM = """Eres un operador que usa una aplicación de gestión desconocida a través de capturas de \
@@ -190,6 +191,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
     zoom_b64 = None
     estado, resultado = "fallida", Resultado(razon="se agotó el tiempo antes de terminar")
     paso = 0
+    reconexiones = 0
 
     try:
         with open(out / "trace.jsonl", "a", encoding="utf-8") as trace:
@@ -200,6 +202,22 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 trace.write(redact(linea, secrets) + "\n")
                 if not any(e[:40] == texto[:40] for e in mem.eventos):
                     mem.eventos.append(texto)
+
+            async def reconectar(error: RFBError) -> None:
+                """Conexión VNC caída: reabre la sesión y sigue con la misma memoria."""
+                nonlocal reconexiones
+                if reconexiones >= MAX_RECONEXIONES:
+                    raise error
+                reconexiones += 1
+                log_evento(f"conexión VNC caída; reconexión {reconexiones}")
+                await client.reconnect()
+
+            async def capturar():
+                try:
+                    return await wait_stable(client)
+                except RFBError as e:
+                    await reconectar(e)
+                    return await wait_stable(client)
 
             while paso < MAX_PASOS:
                 if time.monotonic() > deadline - 8:
@@ -213,7 +231,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                     aviso = (f"FASE DE CIERRE: quedan {deadline - time.monotonic():.0f} s. No inicies "
                              "cambios nuevos; verifica lo hecho y responde done o fail ya.")
                     mem.feedback = f"{mem.feedback} {aviso}" if mem.feedback else aviso
-                img = await wait_stable(client)
+                img = await capturar()
                 img.save(out / f"{paso:02d}.png")
                 antes = _digest(img)
 
@@ -242,7 +260,15 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                     efecto, fin = "rechazada por guardrail", None
                     log_evento(f"guardrail: {_describe(a)} bloqueada ({motivo.split('.')[0]})")
                 else:
-                    efecto, fin = await _ejecutar(a, client, mem)
+                    try:
+                        efecto, fin = await _ejecutar(a, client, mem)
+                    except RFBError as e:
+                        # No se repite: no se sabe si la acción llegó (repetir un guardado duplica).
+                        await reconectar(e)
+                        efecto, fin = "conexión perdida y recuperada: no se sabe si la acción llegó", None
+                        mem.feedback = ("Se cayó la conexión con el escritorio durante tu acción y se "
+                                        "reconectó. Mira la pantalla: no sabes si la acción se ejecutó; no "
+                                        "la repitas a ciegas (si confirmaba un cambio, verifica antes).")
                     guardia.ejecutada(paso, a)
                     if a.confirma_cambio and efecto == "ejecutada":
                         mem.hechos.append(f"paso {paso}: TÚ confirmaste un cambio ({_describe(a)}); un registro "
@@ -250,7 +276,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 if fin:
                     estado, resultado = fin
                 elif a.accion not in ("zoom", "wait") and not efecto.startswith("rechazada"):
-                    cambio = _digest(await wait_stable(client)) != antes
+                    cambio = _digest(await capturar()) != antes
                     efecto = "pantalla cambió" if cambio else "sin cambio en pantalla"
                     sin_cambio = 0 if cambio else sin_cambio + 1
                     if not cambio and a.accion in ("click", "double_click", "type"):
