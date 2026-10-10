@@ -1,0 +1,94 @@
+{
+  "resumen": {
+    "total": 4,
+    "correctas": 4,
+    "pct": 100.0,
+    "falsos_exitos": 0,
+    "p50_s": 85.3,
+    "p95_s": 85.4,
+    "usd_total": 0.2247,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E3",
+      "task_id": "7676fcd68c34",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtro Cliente=Ferretería Ruiz y Estado=Vencida, 3 páginas, total según CONTEO 45\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre formularios, barra de acciones y nombres de botones)",
+      "segundos": 80.3,
+      "post_ms": 25,
+      "pasos": 11,
+      "usd": 0.0501
+    },
+    {
+      "id": "E3",
+      "task_id": "0bcc8e563097",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtro cliente Ferretería Ruiz y estado Vencida; 3 páginas recorridas, total del sistema 45\neventos: modal inesperado: Novedades de la versión 4.2 (formularios se aplican sin cerrarse, barra de acciones a la derecha, nuevos nombres de botones)",
+      "segundos": 85.3,
+      "post_ms": 6,
+      "pasos": 12,
+      "usd": 0.0618
+    },
+    {
+      "id": "E3",
+      "task_id": "05eb4071de92",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtro Cliente=Ferretería Ruiz y Estado=Vencida; 3 páginas recorridas, total según CONTEO 45\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre cambios de formularios y botones)",
+      "segundos": 75.3,
+      "post_ms": 5,
+      "pasos": 11,
+      "usd": 0.0507
+    },
+    {
+      "id": "E3",
+      "task_id": "f4a9cecd658a",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtro cliente Ferretería Ruiz y estado Vencida; 3 páginas (16+18+11) = 45 facturas\neventos: modal inesperado: Novedades de la versión 4.2 (avisos informativos sobre formularios, barra de acciones y botones)",
+      "segundos": 85.4,
+      "post_ms": 3,
+      "pasos": 12,
+      "usd": 0.0621
+    }
+  ]
+}

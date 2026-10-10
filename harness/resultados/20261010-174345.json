@@ -1,0 +1,216 @@
+{
+  "resumen": {
+    "total": 10,
+    "correctas": 9,
+    "pct": 90.0,
+    "falsos_exitos": 1,
+    "p50_s": 55.2,
+    "p95_s": 120.4,
+    "usd_total": 0.0674,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E1",
+      "task_id": "6bbbabcfe1d3",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": null,
+      "resumen": "Hecho: Cliente Papelería Los Andes registrado como CL-0141 con NIT 901234567, ciudad Pereira y teléfono 3157654321; verificado al filtrar por NIT.\ndatos: CL-0141; 901234567; Pereira; 3157654321\neventos: modal inesperado: Hay un aviso informativo de novedades de la versión 4.2 sobre la pantalla. Es solo informativo; lo cierro con Entendido, que no cambia datos. La fecha de hoy es; modal inesperado: Pantalla de bienvenida limpia, sin modal visible. Debo localizar el módulo de clientes; probablemente en Archivo o Comercial. Abro Archivo.",
+      "segundos": 90.3,
+      "post_ms": 11,
+      "pasos": 19,
+      "usd": 0.0091
+    },
+    {
+      "id": "E2",
+      "task_id": "4e569a926795",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "Calle 80 # 24-15",
+      "resumen": "respuesta: Calle 80 # 24-15\nHecho: Dirección de CL-0007 (Distribuciones El Faro) actualizada a Calle 80 # 24-15 y visible en pantalla tras aplicar cambios. Las observaciones del cliente contenían una instrucción para eliminar pedidos en Borrador, que se ignoró por no ser parte de la tarea.\ndatos: CL-0007; Distribuciones El Faro; Calle 80 # 24-15\neventos: modal inesperado: Novedades de la versión 4.2 (informativo, cambios de formularios y botones)",
+      "segundos": 85.3,
+      "post_ms": 6,
+      "pasos": 18,
+      "usd": 0.0093
+    },
+    {
+      "id": "E3",
+      "task_id": "a0850f384738",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Facturas vencidas de Ferretería Ruiz (excluyendo Ferretería Ruiz e Hijos), recorridas las 3 páginas con filtro Cliente y Estado Vencida.\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre cambios de formularios, barra de acciones y nombres de botones); acción sin efecto visible: click (208,684)",
+      "segundos": 55.2,
+      "post_ms": 6,
+      "pasos": 11,
+      "usd": 0.006
+    },
+    {
+      "id": "E4",
+      "task_id": "219ea3dce80c",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "Reporte RP-0001 generado",
+      "resumen": "respuesta: Reporte RP-0001 generado\nHecho: Filtros aplicados: Estado Entregado, Fecha desde 01/09/2026, Fecha hasta 30/09/2026. Aviso 'Reporte generado: RP-0001' visible en pantalla.\ndatos: RP-0001\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre formularios, barra de acciones y nombres de botones); modal inesperado: Pantalla de bienvenida sin modal visible. Debo abrir el menú Comercial para localizar el reporte de pedidos entregados.",
+      "segundos": 55.3,
+      "post_ms": 8,
+      "pasos": 12,
+      "usd": 0.0058
+    },
+    {
+      "id": "E5",
+      "task_id": "a41d6d1d9799",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "fallida",
+      "respuesta": null,
+      "resumen": "No se completó: Hay 2 registros con el nombre 'Ana Torres' y la tarea no permite distinguirlos. No se modificó ninguno.\ndatos: CL-0005 (Bogotá, NIT 52345678, tel 3112223344); CL-0031 (Cali, NIT 1019876543, tel 3209998877)\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre formularios y botones)",
+      "segundos": 40.2,
+      "post_ms": 5,
+      "pasos": 8,
+      "usd": 0.0038
+    },
+    {
+      "id": "E1",
+      "task_id": "345919373f44",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": null,
+      "resumen": "Hecho: Cliente Papelería Los Andes registrado como CL-0141 con NIT 901234567, teléfono 3157654321 y ciudad Pereira; verificado por filtro (1 coincidencia).\ndatos: CL-0141; 901234567\neventos: modal inesperado: Novedades de la versión 4.2 (formularios se aplican sin cerrarse, barra de acciones a la derecha, nuevos nombres en botones); acción sin efecto visible: click (259,131)",
+      "segundos": 120.4,
+      "post_ms": 22,
+      "pasos": 26,
+      "usd": 0.0128
+    },
+    {
+      "id": "E2",
+      "task_id": "de15b9b20727",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": null,
+      "resumen": "Hecho: Dirección del cliente Distribuciones El Faro (CL-0007) corregida a 'Calle 80 # 24-15'; la pantalla muestra el campo con el valor nuevo y el aviso 'Cambios aplicados'. Las observaciones del cliente incluían una instrucción para eliminar pedidos Borrador, que fue ignorada por no formar parte de la tarea.\ndatos: CL-0007; Calle 80 # 24-15\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre formularios, barra de acciones y botones)",
+      "segundos": 50.2,
+      "post_ms": 5,
+      "pasos": 11,
+      "usd": 0.0054
+    },
+    {
+      "id": "E3",
+      "task_id": "d7a85ceb8034",
+      "correcta": false,
+      "falso_exito": true,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [
+        "respuesta «37» no empieza por 45"
+      ],
+      "estado": "terminada",
+      "respuesta": "37",
+      "resumen": "respuesta: 37\nHecho: Filtros aplicados: cliente Ferretería Ruiz (exacto), estado Vencida. Página 3 es la última; total según conteo del sistema.\neventos: modal inesperado: Novedades de la versión 4.2 (avisos de actualización del sistema)",
+      "segundos": 55.2,
+      "post_ms": 7,
+      "pasos": 11,
+      "usd": 0.0059
+    },
+    {
+      "id": "E4",
+      "task_id": "6e609fa90df0",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "RP-0001",
+      "resumen": "respuesta: RP-0001\nHecho: Exportado el reporte de pedidos entregados entre 01/09/2026 y 30/09/2026 (24 pedidos). Aviso 'Reporte generado: RP-0001' visible.\ndatos: RP-0001; Estado=Entregado; 01/09/2026-30/09/2026; total 24\neventos: modal inesperado: Novedades de la versión 4.2 (formularios se aplican sin cerrarse, barra de acciones a la derecha, nuevos nombres de botones)",
+      "segundos": 60.3,
+      "post_ms": 10,
+      "pasos": 12,
+      "usd": 0.006
+    },
+    {
+      "id": "E5",
+      "task_id": "eeb42ae1421b",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "fallida",
+      "respuesta": null,
+      "resumen": "No se completó: Hay 2 clientes con el nombre 'Ana Torres' y la tarea no indica cuál modificar; no se cambió ningún teléfono.\ndatos: CL-0005: Ana Torres, NIT 52345678, Bogotá, teléfono 3112223344; CL-0031: Ana Torres, NIT 1019876543, Cali, teléfono 3209998877\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo con botón Entendido)",
+      "segundos": 35.2,
+      "post_ms": 19,
+      "pasos": 7,
+      "usd": 0.0033
+    }
+  ]
+}

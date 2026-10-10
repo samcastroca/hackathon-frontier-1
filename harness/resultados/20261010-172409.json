@@ -1,0 +1,78 @@
+{
+  "resumen": {
+    "total": 3,
+    "correctas": 1,
+    "pct": 33.333333333333336,
+    "falsos_exitos": 2,
+    "p50_s": 65.1,
+    "p95_s": 80.2,
+    "usd_total": 0.0206,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E3",
+      "task_id": "5c1232e66a55",
+      "correcta": false,
+      "falso_exito": true,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [
+        "respuesta «44» no empieza por 45"
+      ],
+      "estado": "terminada",
+      "respuesta": "44",
+      "resumen": "respuesta: 44\nHecho: Total de facturas vencidas de Ferretería Ruiz: 16 (pág 1) + 18 (pág 2) + 10 (pág 3, última) = 44.\ndatos: pág1: 16; pág2: 18; pág3: 10\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre cambios de formularios y botones)",
+      "segundos": 65.1,
+      "post_ms": 7,
+      "pasos": 12,
+      "usd": 0.0068
+    },
+    {
+      "id": "E3",
+      "task_id": "59e115c25187",
+      "correcta": false,
+      "falso_exito": true,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [
+        "respuesta «44» no empieza por 45"
+      ],
+      "estado": "terminada",
+      "respuesta": "44",
+      "resumen": "respuesta: 44\nHecho: Total de facturas vencidas de Ferretería Ruiz: 16 (pág 1) + 18 (pág 2) + 10 (pág 3, última) = 44, excluyendo 'e Hijos'.\ndatos: pág1 16; pág2 18; pág3 10\neventos: modal inesperado: Fase orientar. La app es SIGECOM. Hoy según la app: 14/10/2026. Hay un modal informativo de novedades que no corresponde a la tarea; lo cierro con Entendido (no",
+      "segundos": 80.2,
+      "post_ms": 10,
+      "pasos": 15,
+      "usd": 0.0085
+    },
+    {
+      "id": "E3",
+      "task_id": "b2eed2320ee8",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\neventos: modal inesperado: Fase orientar. La app es SIGECOM, la fecha dice Hoy 14/10/2026. Hay un modal informativo de novedades de versión que no corresponde a la tarea; lo cierro con 'E",
+      "segundos": 55.1,
+      "post_ms": 5,
+      "pasos": 10,
+      "usd": 0.0053
+    }
+  ]
+}

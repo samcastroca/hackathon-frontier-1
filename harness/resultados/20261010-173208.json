@@ -1,0 +1,77 @@
+{
+  "resumen": {
+    "total": 3,
+    "correctas": 2,
+    "pct": 66.66666666666667,
+    "falsos_exitos": 0,
+    "p50_s": 60.2,
+    "p95_s": 70.3,
+    "usd_total": 0.0198,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E3",
+      "task_id": "86a0e1f1b8dc",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtro cliente 'Ferretería Ruiz' + estado Vencida, excluyendo 'Ferretería Ruiz e Hijos'; recorridas las 3 páginas.\neventos: modal inesperado: Novedades de la versión 4.2 (lista de cambios de la interfaz, aviso informativo)",
+      "segundos": 60.2,
+      "post_ms": 18,
+      "pasos": 12,
+      "usd": 0.0064
+    },
+    {
+      "id": "E3",
+      "task_id": "4df6a32552a0",
+      "correcta": false,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [
+        "estado fallida ≠ terminada",
+        "falta la línea respuesta:"
+      ],
+      "estado": "fallida",
+      "respuesta": null,
+      "resumen": "No se completó: El conteo de la página 3 no coincide: la captura muestra 11 ids (FV-10009, FV-10025, FV-10213, FV-10167, FV-10114, FV-10023, FV-10053, FV-10131, FV-10184, FV-10061, FV-10094), pero el registro previo tenía 11 y el total 45 no pudo verificarse contra las páginas 1 y 2 en esta sesión.\ndatos: FV-10009; FV-10025; FV-10213; FV-10167; FV-10114; FV-10023; FV-10053; FV-10131; FV-10184; FV-10061; FV-10094\neventos: modal inesperado: Hay un modal informativo de novedades de versión. Debo leer la fecha (Hoy: 14/10/2026) y cerrar el aviso con 'Entendido', que no cambia datos.",
+      "segundos": 60.2,
+      "post_ms": 6,
+      "pasos": 11,
+      "usd": 0.006
+    },
+    {
+      "id": "E3",
+      "task_id": "2cd234328ef3",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre cambios de formularios y botones)",
+      "segundos": 70.3,
+      "post_ms": 4,
+      "pasos": 13,
+      "usd": 0.0074
+    }
+  ]
+}

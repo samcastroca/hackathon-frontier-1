@@ -1,0 +1,76 @@
+{
+  "resumen": {
+    "total": 3,
+    "correctas": 2,
+    "pct": 66.66666666666667,
+    "falsos_exitos": 1,
+    "p50_s": 61.8,
+    "p95_s": 65.3,
+    "usd_total": 0.0181,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E3",
+      "task_id": "327f4ea2b38d",
+      "correcta": false,
+      "falso_exito": true,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [
+        "respuesta «34» no empieza por 45"
+      ],
+      "estado": "terminada",
+      "respuesta": "34",
+      "resumen": "respuesta: 34\nHecho: Filtros cliente 'Ferretería Ruiz' (exacto, excluyendo 'Ferretería Ruiz e Hijos') y estado Vencida aplicados. Conteo por ids únicos: páginas 1 y 2 = 34 según el sistema; la página 3 aporta 10 filas adicionales.\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo de cambios en formularios y botones); acción sin efecto visible: click (207,684)",
+      "segundos": 61.8,
+      "post_ms": 22,
+      "pasos": 11,
+      "usd": 0.0062
+    },
+    {
+      "id": "E3",
+      "task_id": "3c0b9dd21000",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Total de facturas vencidas de Ferretería Ruiz (cliente exacto, estado Vencida): página 1: 16, página 2: 18, página 3: 11.\ndatos: FV-10066; FV-10085\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre cambios de formularios, barra de acciones y botones)",
+      "segundos": 50.1,
+      "post_ms": 7,
+      "pasos": 10,
+      "usd": 0.0053
+    },
+    {
+      "id": "E3",
+      "task_id": "7d76ad875a29",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "45",
+      "resumen": "respuesta: 45\nHecho: Filtros cliente Ferretería Ruiz (exacto, excluyendo Ruiz e Hijos) y estado Vencida; total de páginas 1-3 sumado por el sistema.\neventos: modal inesperado: Novedades de la versión 4.2 (avisos informativos sobre formularios, barra de acciones y botones); acción sin efecto visible: click (208,684)",
+      "segundos": 65.3,
+      "post_ms": 4,
+      "pasos": 12,
+      "usd": 0.0066
+    }
+  ]
+}

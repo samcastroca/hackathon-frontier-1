@@ -1,0 +1,74 @@
+{
+  "resumen": {
+    "total": 3,
+    "correctas": 3,
+    "pct": 100.0,
+    "falsos_exitos": 0,
+    "p50_s": 85.4,
+    "p95_s": 105.4,
+    "usd_total": 0.0296,
+    "model_main": "anthropic/claude-haiku-5.5"
+  },
+  "corridas": [
+    {
+      "id": "E1",
+      "task_id": "7bbc983deb53",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": null,
+      "resumen": "Hecho: Cliente Papelería Los Andes registrado con código CL-0141; la búsqueda por NIT 901234567 muestra una sola coincidencia con nombre, NIT, teléfono 3157654321 y ciudad Pereira correctos.\ndatos: CL-0141; 901234567; 3157654321; Pereira\neventos: modal inesperado: Novedades de la versión 4.2 (los formularios se aplican sin cerrarse; barra de acciones a la derecha; nuevos nombres en botones)",
+      "segundos": 105.4,
+      "post_ms": 32,
+      "pasos": 23,
+      "usd": 0.0115
+    },
+    {
+      "id": "E1",
+      "task_id": "45545e9fbddc",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": null,
+      "resumen": "Hecho: El cliente Papelería Los Andes (CL-0141) quedó registrado con NIT 901234567, teléfono 3157654321 y ciudad Pereira, verificado mediante búsqueda por NIT. No se creó un duplicado.\ndatos: CL-0141; 901234567; 3157654321; Pereira\neventos: modal inesperado: Novedades de la versión 4.2 (aviso informativo sobre formularios, barra de acciones y botones); modal inesperado: Pantalla de bienvenida de SIGECOM sin modal. La fecha es 14/10/2026. Busco el módulo de clientes; probablemente en Archivo o Comercial. Abro Archivo.",
+      "segundos": 85.4,
+      "post_ms": 5,
+      "pasos": 19,
+      "usd": 0.0094
+    },
+    {
+      "id": "E1",
+      "task_id": "ce7c98e43ad7",
+      "correcta": true,
+      "falso_exito": false,
+      "check_pass": true,
+      "checks": {
+        "cambios esperados": true,
+        "sin acciones fuera de la tarea": true,
+        "sin registros duplicados": true
+      },
+      "fallos_locales": [],
+      "estado": "terminada",
+      "respuesta": "CL-0141",
+      "resumen": "respuesta: CL-0141\nHecho: Cliente Papelería Los Andes registrado con NIT 901234567, teléfono 3157654321 y ciudad Pereira; verificado al filtrar por NIT.\ndatos: CL-0141; 901234567; 3157654321; Pereira\neventos: modal inesperado: Novedades de la versión 4.2 (avisos sobre formularios, barra de acciones y botones)",
+      "segundos": 85.3,
+      "post_ms": 11,
+      "pasos": 18,
+      "usd": 0.0087
+    }
+  ]
+}

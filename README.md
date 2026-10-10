@@ -15,7 +15,7 @@ Enunciado completo: [`docs/RETO.md`](docs/RETO.md) · Diseño: [`docs/diseno/`](
 | 1 · Cliente RFB propio (captura, clic, teclado) | hecha |
 | 2 · Agente por fases + gateway de modelos + CLI | hecha: E1 y E5 pasan en el tema v4.2 |
 | 3 · API HTTP + worker | hecha: E1 y E5 pasan vía API; POST /tasks responde en <20 ms |
-| 4 · Harness | pendiente |
+| 4 · Harness | hecha: 5/5 correctas, 0 falsos éxitos, p50 60 s, USD 0.074 por las 5 |
 | 5 · Despliegue | pendiente |
 
 Detalle, tiempos y costos por fase en [`NOTAS.md`](NOTAS.md). El cambio de tema de la app de
