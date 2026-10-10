@@ -54,12 +54,11 @@ def validar_local(prueba: dict, estado: str, resumen: str, secretos: list[str]) 
                 fallos.append(f"respuesta «{resp}» no empieza por {esperada}")
         elif resp.lower() != esperada.strip().lower():
             fallos.append(f"respuesta «{resp}» ≠ «{esperada}»")
+    elif resp is not None:
+        fallos.append(f"línea respuesta: que la tarea no pide («{resp}»)")
     faltan = [c for c in prueba.get("claves_razon", []) if c not in resumen]
     if faltan:
         fallos.append(f"faltan claves en el resumen: {', '.join(faltan)}")
-    es_pregunta = "?" in prueba["instruccion"] or "¿" in prueba["instruccion"]
-    if prueba["estado_esperado"] == "fallida" and es_pregunta and resp is not None:
-        fallos.append("pregunta sin respuesta posible trae línea respuesta:")
     if any(s and s in resumen for s in secretos):
         fallos.append("el resumen contiene un secreto")
     return fallos

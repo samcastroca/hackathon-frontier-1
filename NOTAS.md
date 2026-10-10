@@ -43,8 +43,12 @@ cuesta ~15× menos. gpt-6-luna es el más lento.
   registro y lo tomó por uno preexistente. Arreglo: hecho persistente «en el paso N TÚ
   confirmaste un cambio» y guardrail que rechaza una vez un `fail` posterior a una confirmación.
   3/3 después del arreglo.
-- **E2 (1 vez).** Se cayó la conexión VNC (`ConnectionClosedError`) en el paso 2; no es del
+- **Caídas VNC (E2 y E4, 2 de ~45 corridas).** `ConnectionClosedError` a mitad de tarea; no es del
   agente. Sin reconexión todavía.
+- **`respuesta:` en tareas de acción (E1, E2, E4).** El modelo ponía el código creado o el valor
+  escrito como respuesta. Arreglo: el prompt la limita a tareas que piden un dato (el código va en
+  claves) y el harness marca como fallo una `respuesta:` que la prueba no espera. Siguiente
+  corrida ×2: 9/10, ninguna tarea de acción con `respuesta:`; el fallo fue una caída VNC.
 - En Windows el harness usa `127.0.0.1`: con `localhost` el POST tardaba 2 s (prueba IPv6 primero).
 
 ## Harness · corridas
@@ -58,3 +62,4 @@ cuesta ~15× menos. gpt-6-luna es el más lento.
 - 2026-10-10 18:00 · E1,E2,E3,E4,E5 · correctas 8/10 · falsos éxitos 0 · p50/p95 50/90 s · USD 0.1456 · anthropic/claude-haiku-5.5
 - 2026-10-10 18:06 · E1 · correctas 3/3 · falsos éxitos 0 · p50/p95 85/105 s · USD 0.0296 · anthropic/claude-haiku-5.5
 - 2026-10-10 18:11 · E1,E2,E3,E4,E5 · correctas 5/5 · falsos éxitos 0 · p50/p95 60/85 s · USD 0.0740 · anthropic/claude-haiku-5.5
+- 2026-10-10 18:28 · E1,E2,E3,E4,E5 · correctas 9/10 · falsos éxitos 0 · p50/p95 50/100 s · USD 0.1678 · anthropic/claude-haiku-5.5

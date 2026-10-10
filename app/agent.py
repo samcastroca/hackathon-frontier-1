@@ -56,6 +56,9 @@ orden, sin volver atrás (puedes llenar conteo en la misma respuesta en la que p
 Al terminar la última página responde con el total de CONTEO: es la fuente de verdad (cuenta los \
 identificadores que tú transcribiste) y manda sobre cualquier conteo a ojo. resultado.respuesta lleva solo el valor (si es número, el número primero); dos datos separados \
 por "; " en el orden preguntado. Si no se puede responder → fail sin respuesta.
+- resultado.respuesta va SOLO si la tarea pide un dato (una pregunta, "dime", "indica"...). En \
+tareas de acción (crear, corregir, exportar...) respuesta es null; el código o dato que generó la \
+app va en claves.
 - Nunca escribas contraseñas, tokens ni secretos en el resultado.
 - Coordenadas x, y en píxeles de la captura, en el centro del elemento.
 - "type" escribe en un campo: da x, y del campo; el sistema hace clic, selecciona todo y \
