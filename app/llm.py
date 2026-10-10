@@ -38,6 +38,12 @@ class Resultado(BaseModel):
     claves: list[str] = Field(default_factory=list)
 
 
+class Conteo(BaseModel):
+    """Filas que cumplen la condición en la página visible; el sistema las cuenta y suma."""
+    pagina: str = "1"
+    ids: list[str] = Field(default_factory=list)
+
+
 class Accion(BaseModel):
     pensamiento: str = ""
     plan: str | None = None
@@ -51,6 +57,7 @@ class Accion(BaseModel):
     confirma_cambio: bool = False
     hechos_nuevos: list[str] = Field(default_factory=list)
     evento: str | None = None
+    conteo: Conteo | None = None
     resultado: Resultado = Field(default_factory=Resultado)
 
 
@@ -78,7 +85,7 @@ class LLM:
     async def close(self) -> None:
         await self._http.aclose()
 
-    async def chat(self, modelo: str, messages: list[dict], max_tokens: int = 800) -> str:
+    async def chat(self, modelo: str, messages: list[dict], max_tokens: int = 1200) -> str:
         """Una llamada a chat completions en modo JSON; registra tokens, USD y latencia."""
         body = {
             "model": modelo,
