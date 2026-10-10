@@ -113,4 +113,7 @@ python harness/run.py --api http://localhost:8000 [--only E1]
 - Tras cada cambio relevante, correr el harness (o la prueba puntual) y anotar el resultado en
   `NOTAS.md` (pasa/no pasa, tiempo, costo). Esos números son evidencia para el video y el debrief.
 - Commits pequeños y frecuentes con mensaje descriptivo. Commit al cerrar cada fase.
+- `README.md` al día: al cerrar una fase o tras un cambio importante (comando o variable de
+  entorno nuevos, cambio de arquitectura o de comportamiento visible), actualizarlo en el mismo
+  commit. Es lo que sigue otra persona para correr el proyecto.
 - Ante un fallo, primero mirar `runs/<task_id>/` (capturas y traza) antes de cambiar el prompt.
