@@ -7,7 +7,7 @@
 | 2 · Agente | hecha | 16:45 | Tema v4.2 desde 16:24. Tras el guardrail de doble confirmación, haiku pasa E1 (2/2) y E5. Recomendado MODEL_MAIN = haiku-5.5 (ver `INCIDENTE.md`) | Si haiku vuelve a fallar en el tema nuevo: sonnet-5.5 como MAIN |
 | 3 · API + worker | hecha | 2026-10-10 | Vía API: POST /tasks en 6–19 ms; sin token / token malo → 401; id inexistente → 404; cuerpo vacío → 422. E1 pasa (15 pasos, ~70 s, USD 0.0068), E5 `fallida` con las dos cédulas (7 pasos, ~35 s, USD 0.0031). Error de configuración (MODEL_MAIN vacío) → `fallida` con razón, sin colgarse | — |
 | 4 · Harness | hecha | 18:11 | `harness/run.py`. Final: 5/5 correctas, 0 falsos éxitos, p50/p95 60/85 s, USD 0.074 (E3 0.052 por el conteo con sonnet). Detalle abajo | — |
-| 5 · Despliegue | pendiente | | | |
+| 5 · Despliegue | hecha | 18:51 | Railway: https://hackathon-frontier-1-production.up.railway.app. Smoke OK (POST /tasks 114 ms, E1 `terminada` en 75 s). Harness remoto 5/5, 0 falsos éxitos, USD 0.0907 (de los logs). Ver abajo y `docs/DEPLOY.md` | `cloudflared tunnel --url http://localhost:8000` |
 
 ## Fase 2 · Comparación de modelos (2026-10-10, 15:35–15:40)
 
@@ -54,6 +54,24 @@ cuesta ~15× menos. gpt-6-luna es el más lento.
   corrida ×2: 9/10, ninguna tarea de acción con `respuesta:`; el fallo fue una caída VNC.
 - En Windows el harness usa `127.0.0.1`: con `localhost` el POST tardaba 2 s (prueba IPv6 primero).
 
+## Fase 5 · Despliegue en Railway (2026-10-10, 18:30–18:55)
+
+- `Dockerfile` (un worker, `${PORT}`), `.dockerignore`, `railway.json` (healthcheck `/health` 60 s,
+  1 réplica, `ON_FAILURE` ×10, `sleepApplication: false`; campos verificados contra el esquema
+  oficial). `/health` ya no exige token; las demás rutas sí.
+- Logs por paso a stdout (segundos, USD, modelo, fase, acción, pensamiento de 100 caracteres),
+  redactados con `redact()`. Revisados en Railway: sin contraseña, tokens ni llave.
+- Docker Desktop no estaba corriendo: el arranque se verificó con el mismo comando de uvicorn en
+  local (health 200 sin token, /tasks 401) y el build real lo hizo Railway (OK al primer intento).
+- Primer smoke: 401 en POST /tasks por `API_TOKEN` distinto en el dashboard; corregido a mano.
+- Smoke (`scripts/smoke_remote.py`): health con/sin token 200, /tasks sin token 401, POST /tasks
+  114 ms, E1 `terminada` en 75 s (17 pasos, USD 0.0083).
+- Harness remoto: 5/5, 0 falsos éxitos, POST 96–294 ms, p50/p95 53/134 s. USD por tarea de los
+  logs: E1 0.0169 (34 pasos), E2 0.0049, E3 0.0595, E4 0.0060, E5 0.0034 → 0.0907.
+  En remoto el harness no ve `runs/`, por eso su columna USD sale «-».
+- El CLI avisa que config as code (`railway.json`) queda obsoleto: sigue funcionando hasta 2026-12-01.
+- **Congelar a las 19:45**: cada push redespliega y borra las tareas en memoria.
+
 ## Harness · corridas
 - 2026-10-10 17:16 · E1,E2,E3,E4,E5 · correctas 4/5 · falsos éxitos 0 · p50/p95 70/95 s · USD 0.0319 · anthropic/claude-haiku-5.5
 - 2026-10-10 17:20 · E3 · correctas 1/2 · falsos éxitos 0 · p50/p95 55/90 s · USD 0.0155 · anthropic/claude-haiku-5.5
@@ -67,3 +85,4 @@ cuesta ~15× menos. gpt-6-luna es el más lento.
 - 2026-10-10 18:11 · E1,E2,E3,E4,E5 · correctas 5/5 · falsos éxitos 0 · p50/p95 60/85 s · USD 0.0740 · anthropic/claude-haiku-5.5
 - 2026-10-10 18:28 · E1,E2,E3,E4,E5 · correctas 9/10 · falsos éxitos 0 · p50/p95 50/100 s · USD 0.1678 · anthropic/claude-haiku-5.5
 - 2026-10-10 18:36 · E1,E2,E3,E4,E5 · correctas 5/5 · falsos éxitos 0 · p50/p95 80/90 s · USD 0.1019 · anthropic/claude-haiku-5.5
+- 2026-10-10 18:51 · E1,E2,E3,E4,E5 · correctas 5/5 · falsos éxitos 0 · p50/p95 53/134 s · USD 0.0907 (logs Railway) · anthropic/claude-haiku-5.5 · **remoto (Railway)**

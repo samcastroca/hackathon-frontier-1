@@ -32,7 +32,7 @@ cp .env.example .env      # y rellenar los valores
 
 | Variable | Para qué |
 | -------- | -------- |
-| `API_TOKEN` | Token Bearer que exige la API en todas las rutas |
+| `API_TOKEN` | Token Bearer que exige la API (todas las rutas menos `/health`) |
 | `OPENROUTER_API_KEY` | Llamadas a los modelos |
 | `MODEL_MAIN` | Modelo de cada paso. Recomendado: `anthropic/claude-haiku-5.5` |
 | `MODEL_STRONG` | Modelo para atascos. Recomendado: `anthropic/claude-sonnet-5.5` |
@@ -51,9 +51,11 @@ python -m app.cli "<tarea>" [--model X]    # resetea el escritorio y corre una t
 python -m app.cli --prueba pruebas/E1-crear-cliente.json   # corre una prueba y llama /__check
 uvicorn app.api:app --host 0.0.0.0 --port 8000             # servicio HTTP del entrypoint
 python harness/run.py --api http://127.0.0.1:8000 [--only E1,E3] [--repeat N]   # pruebas vía la API
+python scripts/smoke_remote.py https://<dominio>         # smoke contra la API desplegada (auth, latencia, E1)
 ```
 
-La API (todas las rutas piden `Authorization: Bearer $API_TOKEN`; sin él, 401):
+La API (todas las rutas piden `Authorization: Bearer $API_TOKEN`, sin él 401; `/health` responde
+200 también sin token, para el healthcheck del despliegue):
 
 ```bash
 curl -H "Authorization: Bearer $API_TOKEN" localhost:8000/health          # {"ok": true}
@@ -76,7 +78,14 @@ y USD; guarda el detalle en `harness/resultados/<timestamp>.json` y agrega una l
 En Windows usa `127.0.0.1` y no `localhost` (este último intenta primero IPv6 y suma ~2 s).
 
 Cada tarea deja su traza en `runs/<task_id>/`: una captura por paso y `trace.jsonl` con la
-acción, el modelo, la latencia, el costo y los eventos inesperados (sin secretos).
+acción, el modelo, la latencia, el costo y los eventos inesperados (sin secretos). El servicio
+además escribe en stdout una línea por paso (segundos, USD, modelo, fase, acción, pensamiento
+corto), redactada.
+
+## Despliegue
+
+Corre en Railway (`Dockerfile` + `railway.json`, un worker, sin dormir). Cada push a `main`
+redespliega. Pasos, logs y plan B en [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 ## Cómo funciona
 
