@@ -4,7 +4,7 @@
 | ---- | ------ | ---- | --------- | ------ |
 | 0 · Setup del repo | hecha | | Esqueleto, docs y `scripts/check_desktop.py` | — |
 | 1 · Conexión RFB | hecha | 2026-10-10 | `demo_rfb.py` OK a 1280×800: handshake 1.2–2.0 s, primer frame 0.9–1.6 s, `wait_stable` ~0.7 s, clic 0.16 s. Ctrl+A + `type_text` verificado en un campo real: «Papelería # ñ Ñandú €» exacto y sin concatenar | Playwright + noVNC si el handshake no sale (no hizo falta) |
-| 2 · Agente | hecha | 15:40 | E1 y E5 pasan con los 3 candidatos (tema anterior, ver abajo). Recomendado MODEL_MAIN = haiku-5.5 | Si un modelo falla en el tema nuevo: subir a sonnet-5.5 como MAIN |
+| 2 · Agente | hecha | 16:45 | Tema v4.2 desde 16:24. Tras el guardrail de doble confirmación, haiku pasa E1 (2/2) y E5. Recomendado MODEL_MAIN = haiku-5.5 (ver `INCIDENTE.md`) | Si haiku vuelve a fallar en el tema nuevo: sonnet-5.5 como MAIN |
 | 3 · API + worker | pendiente | | | |
 | 4 · Harness | pendiente | | | |
 | 5 · Despliegue | pendiente | | | |
@@ -15,8 +15,8 @@ Calibración (`scripts/calibrate.py`): los 3 devuelven **píxeles** (error 1–2
 Razonamiento: `none` en haiku-5.5 y gpt-6-luna; sonnet-5.5 no deja desactivarlo → `minimal`.
 MODEL_STRONG = sonnet-5.5 en todas las corridas (no hizo falta escalar: 0 atascos).
 
-**Ojo:** el tema nuevo del incidente (FR-0153) aún no se veía en nuestro escritorio; estas
-corridas son sobre el **tema anterior**. Repetir en el tema nuevo (tabla en `INCIDENTE.md`).
+**Ojo:** estas corridas son sobre el **tema anterior** (v3.9). Las del tema nuevo (v4.2) están
+en `INCIDENTE.md`.
 
 | Modelo | Prueba | Pasa | Pasos | Segundos | Latencia/paso | USD |
 | ------ | ------ | ---- | ----- | -------- | ------------- | --- |

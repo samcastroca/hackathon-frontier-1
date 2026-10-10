@@ -2,17 +2,20 @@
 import hashlib
 import json
 import os
+import re
 import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from app import rfb
+from app.guards import Guardia
 from app.llm import LLM, Accion, Resultado
 from app.rfb import RFBClient
 from app.screen import to_png_b64, wait_stable, zoom
 from app.summary import build_summary, redact
 
+MODAL_RE = re.compile(r"\b(modal|di[aá]logo|aviso|popup|ventana emergente)\b", re.I)
 RUNS = Path(__file__).resolve().parent.parent / "runs"
 MAX_PASOS = 40
 ULTIMAS_ACCIONES = 8
@@ -22,13 +25,16 @@ pantalla de {w}x{h} píxeles. Cada turno ves la pantalla actual y una memoria en
 UNA acción como un objeto JSON.
 
 Fases, en orden:
-1. orientar: entiende qué app es, qué módulos/menús tiene y lee la fecha de "hoy" que muestra la app (agrégala a hechos_nuevos como "hoy: <fecha>"). El navegador conserva el estado de sesiones anteriores: no asumas una pantalla limpia. Si hay un modal, diálogo, aviso o menú abierto que no corresponde a la tarea, léelo, resume su texto en "evento" ("modal inesperado: <resumen>") y ciérralo con la opción que NO cambia datos: Cerrar, X, Entendido, Aceptar de un aviso informativo, Cancelar o Escape. Nunca aceptes algo que modifique datos o configuración.
+1. orientar: entiende qué app es, qué módulos/menús tiene y lee la fecha de "hoy" que muestra la app (agrégala a hechos_nuevos como "hoy: <fecha>"). El navegador conserva el estado de sesiones anteriores: no asumas una pantalla limpia. Si hay un modal, diálogo, aviso o menú abierto que no corresponde a la tarea, léelo y ciérralo; en ESA MISMA respuesta llena obligatoriamente "evento" con \
+"modal inesperado: <resumen de su texto>". Ciérralo con la opción que NO cambia datos: Cerrar, X, Entendido, Aceptar de un aviso informativo, Cancelar o Escape. Nunca aceptes algo que modifique datos o configuración.
 2. localizar: antes de modificar o crear, busca el registro con los filtros de la app. \
 0 coincidencias al modificar → fail. Más de 1 coincidencia que la tarea no permite distinguir → \
 fail nombrando en claves los datos que las distinguen (ej. documentos, códigos). Si vas a crear \
 algo que ya existe → no lo crees; fail o done según la tarea.
 3. actuar: haz solo los cambios pedidos, nada más. Marca confirma_cambio=true en el clic que \
-guarda, elimina, confirma o exporta.
+guarda, elimina, confirma o exporta. Confirma UNA sola vez: tras guardar, el formulario puede \
+quedar abierto; busca un aviso de éxito, un código nuevo o un título que cambió y pasa a verificar \
+en vez de volver a guardar (repetir crea duplicados).
 4. verificar: comprueba en pantalla que el cambio quedó (reabre el registro o búsca de nuevo). \
 done solo con resultado.verificado=true tras verlo.
 5. reportar: done o fail.
@@ -151,6 +157,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
 
     llm = LLM()
     mem = Memoria(tarea)
+    guardia = Guardia()
     system = SYSTEM.format(w=client.width, h=client.height)
     t0 = time.monotonic()
     sin_cambio = 0
@@ -165,7 +172,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 """Evento inesperado: va a la traza y al final del resumen."""
                 linea = json.dumps({"paso": paso, "evento": texto}, ensure_ascii=False)
                 trace.write(redact(linea, secrets) + "\n")
-                if texto not in mem.eventos:
+                if not any(e[:40] == texto[:40] for e in mem.eventos):
                     mem.eventos.append(texto)
 
             while paso < MAX_PASOS:
@@ -188,7 +195,14 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 if on_step:
                     on_step(paso, a, modelo)
 
-                efecto, fin = await _ejecutar(a, client, mem)
+                motivo = guardia.revisar(a)
+                if motivo:
+                    mem.feedback = motivo
+                    efecto, fin = "rechazada por guardrail", None
+                    log_evento(f"guardrail: confirmación repetida bloqueada ({_describe(a)})")
+                else:
+                    efecto, fin = await _ejecutar(a, client, mem)
+                    guardia.ejecutada(paso, a)
                 if fin:
                     estado, resultado = fin
                 elif a.accion not in ("zoom", "wait") and not efecto.startswith("rechazada"):
@@ -202,6 +216,8 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
 
                 mem.acciones.append(f"{paso}. [{a.fase}] {_describe(a)} → {efecto}")
                 call = llm.calls[-1] if llm.calls else None
+                if not a.evento and a.fase == "orientar" and MODAL_RE.search(a.pensamiento):
+                    a.evento = f"modal inesperado: {a.pensamiento[:160]}"
                 if a.evento:
                     log_evento(a.evento)
                 trace.write(redact(json.dumps({
