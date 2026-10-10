@@ -59,7 +59,7 @@ async def run(tarea: str, prueba: dict | None, model: str | None) -> None:
     await client.connect()
     try:
         res = await run_task(tarea, client, deadline=t0 + DEADLINE_S, secrets=[password, token],
-                             on_step=lambda n, a, m: print(f"  {n:>2} [{m}] {a.fase}/{a.accion} "
+                             on_step=lambda n, a, m, *_: print(f"  {n:>2} [{m}] {a.fase}/{a.accion} "
                                                            f"{a.x or ''},{a.y or ''} {a.texto or ''}{a.teclas or ''}"))
     finally:
         await client.close()

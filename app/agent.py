@@ -246,7 +246,7 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                 zoom_b64, mem.feedback = None, None
                 conteo_cambio = mem.absorber(a)
                 if on_step:
-                    on_step(paso, a, modelo)
+                    on_step(paso, a, modelo, llm.usd_total)
 
                 motivo = guardia.revisar(a)
                 if a.accion == "done" and conteo_cambio:

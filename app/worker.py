@@ -23,9 +23,13 @@ async def _operar(task_id: str, tarea: str, url: str, password: str, t0: float, 
         client = RFBClient(url, password)
         await client.connect()
         try:
+            def on_step(n, a, modelo, usd):
+                store.actualizar(task_id, pasos=n)
+                log.info(redact(f"tarea {task_id} paso {n} {time.monotonic() - t0:.0f}s USD {usd:.4f} "
+                                f"[{modelo}] {a.fase}/{a.accion} · {(a.pensamiento or '')[:100]}", secrets))
+
             return await run_task(tarea, client, deadline=t0 + DEADLINE_S, cierre=t0 + CIERRE_S,
-                                  task_id=task_id, secrets=secrets,
-                                  on_step=lambda n, *_: store.actualizar(task_id, pasos=n))
+                                  task_id=task_id, secrets=secrets, on_step=on_step)
         finally:
             await client.close()
 
@@ -48,3 +52,5 @@ async def run(task_id: str, tarea: str, escritorio: dict, t0: float) -> None:
         resumen = build_summary("fallida", Resultado(razon=f"error interno: {type(e).__name__}: {str(e)[:160]}"), secrets=secrets)
     finally:
         store.actualizar(task_id, estado=estado, resumen=redact(resumen or estado, secrets), **campos)
+        log.info("tarea %s: %s en %.0f s · pasos %s · USD %s", task_id, estado, time.monotonic() - t0,
+                 campos.get("pasos", "-"), campos.get("costo", "-"))
