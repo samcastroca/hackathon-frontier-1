@@ -41,6 +41,15 @@ def keysym_for(ch: str) -> int:
     return cp if cp < 256 else 0x01000000 + cp
 
 
+def ws_url(base: str) -> str:
+    """URL del websocket VNC a partir de la URL base del escritorio (https → wss + /websockify)."""
+    base = base.rstrip("/")
+    for http, ws in (("https://", "wss://"), ("http://", "ws://")):
+        if base.startswith(http):
+            base = ws + base[len(http):]
+    return base if base.endswith("/websockify") else base + "/websockify"
+
+
 def _vnc_key(password: str) -> bytes:
     """Clave DES de VNC: contraseña a 8 bytes con los bits de cada byte invertidos."""
     raw = password.encode("latin-1", errors="replace")[:8].ljust(8, b"\0")

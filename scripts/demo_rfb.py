@@ -11,18 +11,10 @@ sys.path.insert(0, str(ROOT))
 
 from dotenv import load_dotenv  # noqa: E402
 
-from app.rfb import CTRL_L, RFBClient, RFBError  # noqa: E402
+from app.rfb import CTRL_L, RFBClient, RFBError, ws_url  # noqa: E402
 from app.screen import wait_stable  # noqa: E402
 
 OUT = ROOT / "runs" / "demo"
-
-
-def ws_url(base: str) -> str:
-    base = base.rstrip("/")
-    for http, ws in (("https://", "wss://"), ("http://", "ws://")):
-        if base.startswith(http):
-            base = ws + base[len(http):]
-    return base + "/websockify"
 
 
 async def run(text: str | None) -> None:

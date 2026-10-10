@@ -13,6 +13,7 @@ async def wait_stable(
     client: RFBClient, interval: float = 0.25, max_wait: float = 1.5, min_wait: float = 0.4
 ) -> Image.Image:
     """Espera min_wait y captura hasta que dos frames seguidos sean iguales o se agote max_wait."""
+    await asyncio.wait_for(client.first_frame.wait(), timeout=15)
     await asyncio.sleep(min_wait)
     img = client.screenshot()
     digest = hashlib.blake2b(img.tobytes()).digest()
