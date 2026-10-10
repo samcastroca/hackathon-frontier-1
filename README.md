@@ -63,7 +63,9 @@ curl -H "Authorization: Bearer $API_TOKEN" localhost:8000/tasks/<task_id>  # {"e
 
 `POST /tasks` responde de inmediato y la tarea corre en segundo plano: una sesión VNC por
 escritorio a la vez. A los 240 s el agente entra en fase de cierre y a los 270 s se corta y queda
-`fallida`, con la conexión ya cerrada. Una tarea nunca se queda en `en_curso`. El estado de cada
+`fallida`, con la conexión ya cerrada. Una tarea nunca se queda en `en_curso`. Si la conexión VNC se
+cae a mitad de tarea, el agente reconecta (hasta 2 veces) y sigue con la misma memoria, sin
+repetir a ciegas la acción que se cortó. El estado de cada
 tarea se guarda también en `runs/<task_id>/task.json`.
 
 El harness (con la API ya levantada) hace, por cada prueba de `pruebas/`: `POST /__reset` del
