@@ -147,7 +147,7 @@ def _describe(a: Accion) -> str:
 
 
 async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
-                   task_id: str | None = None, secrets=()) -> ResultadoTarea:
+                   task_id: str | None = None, secrets=(), cierre: float | None = None) -> ResultadoTarea:
     task_id = task_id or uuid.uuid4().hex[:10]
     out = RUNS / task_id
     out.mkdir(parents=True, exist_ok=True)
@@ -183,6 +183,10 @@ async def run_task(tarea: str, client: RFBClient, deadline: float, on_step=None,
                     resultado = Resultado(razon=f"se superó el tope de costo (USD {max_usd})")
                     break
                 paso += 1
+                if cierre and time.monotonic() > cierre:
+                    aviso = (f"FASE DE CIERRE: quedan {deadline - time.monotonic():.0f} s. No inicies "
+                             "cambios nuevos; verifica lo hecho y responde done o fail ya.")
+                    mem.feedback = f"{mem.feedback} {aviso}" if mem.feedback else aviso
                 img = await wait_stable(client)
                 img.save(out / f"{paso:02d}.png")
                 antes = _digest(img)

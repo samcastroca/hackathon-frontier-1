@@ -14,7 +14,7 @@ Enunciado completo: [`docs/RETO.md`](docs/RETO.md) · Diseño: [`docs/diseno/`](
 | 0 · Setup | hecha |
 | 1 · Cliente RFB propio (captura, clic, teclado) | hecha |
 | 2 · Agente por fases + gateway de modelos + CLI | hecha: E1 y E5 pasan en el tema v4.2 |
-| 3 · API HTTP + worker | pendiente |
+| 3 · API HTTP + worker | hecha: E1 y E5 pasan vía API; POST /tasks responde en <20 ms |
 | 4 · Harness | pendiente |
 | 5 · Despliegue | pendiente |
 
@@ -32,7 +32,7 @@ cp .env.example .env      # y rellenar los valores
 
 | Variable | Para qué |
 | -------- | -------- |
-| `API_TOKEN` | Token Bearer de la API (Fase 3) |
+| `API_TOKEN` | Token Bearer que exige la API en todas las rutas |
 | `OPENROUTER_API_KEY` | Llamadas a los modelos |
 | `MODEL_MAIN` | Modelo de cada paso. Recomendado: `anthropic/claude-haiku-5.5` |
 | `MODEL_STRONG` | Modelo para atascos. Recomendado: `anthropic/claude-sonnet-5.5` |
@@ -49,7 +49,21 @@ python scripts/demo_rfb.py [--type "ñ"]    # conexión VNC: captura, clic y esc
 python scripts/calibrate.py --model X      # comprueba si el modelo devuelve píxeles o coordenadas normalizadas
 python -m app.cli "<tarea>" [--model X]    # resetea el escritorio y corre una tarea
 python -m app.cli --prueba pruebas/E1-crear-cliente.json   # corre una prueba y llama /__check
+uvicorn app.api:app --host 0.0.0.0 --port 8000             # servicio HTTP del entrypoint
 ```
+
+La API (todas las rutas piden `Authorization: Bearer $API_TOKEN`; sin él, 401):
+
+```bash
+curl -H "Authorization: Bearer $API_TOKEN" localhost:8000/health          # {"ok": true}
+curl -H "Authorization: Bearer $API_TOKEN" -H "Content-Type: application/json" localhost:8000/tasks      -d '{"tarea": "...", "escritorio": {"url": "wss://<host>/websockify", "password": "..."}}'
+curl -H "Authorization: Bearer $API_TOKEN" localhost:8000/tasks/<task_id>  # {"estado", "resumen"}
+```
+
+`POST /tasks` responde de inmediato y la tarea corre en segundo plano: una sesión VNC por
+escritorio a la vez. A los 240 s el agente entra en fase de cierre y a los 270 s se corta y queda
+`fallida`, con la conexión ya cerrada. Una tarea nunca se queda en `en_curso`. El estado de cada
+tarea se guarda también en `runs/<task_id>/task.json`.
 
 Cada tarea deja su traza en `runs/<task_id>/`: una captura por paso y `trace.jsonl` con la
 acción, el modelo, la latencia, el costo y los eventos inesperados (sin secretos).
@@ -64,6 +78,9 @@ app/agent.py    Bucle observar → decidir → actuar → verificar en 5 fases:
                 orientar → localizar → actuar → verificar → reportar
 app/guards.py   Guardrails antes de confirmar (bloquea la doble confirmación sin verificar)
 app/summary.py  Resumen por plantilla: "respuesta:" primero, razón, datos, eventos; sin secretos
+app/store.py    Tareas en memoria + runs/<task_id>/task.json (estado, resumen, costo, pasos)
+app/worker.py   1 tarea = 1 sesión VNC; lock por escritorio; cierre a 240 s, corte a 270 s
+app/api.py      FastAPI: Bearer en todo, /health, POST /tasks, GET /tasks/{id}
 app/cli.py      Ejecución desde la terminal
 ```
 
