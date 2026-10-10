@@ -50,6 +50,7 @@ python scripts/calibrate.py --model X      # comprueba si el modelo devuelve pí
 python -m app.cli "<tarea>" [--model X]    # resetea el escritorio y corre una tarea
 python -m app.cli --prueba pruebas/E1-crear-cliente.json   # corre una prueba y llama /__check
 uvicorn app.api:app --host 0.0.0.0 --port 8000             # servicio HTTP del entrypoint
+python harness/run.py --api http://127.0.0.1:8000 [--only E1,E3] [--repeat N]   # pruebas vía la API
 ```
 
 La API (todas las rutas piden `Authorization: Bearer $API_TOKEN`; sin él, 401):
@@ -64,6 +65,13 @@ curl -H "Authorization: Bearer $API_TOKEN" localhost:8000/tasks/<task_id>  # {"e
 escritorio a la vez. A los 240 s el agente entra en fase de cierre y a los 270 s se corta y queda
 `fallida`, con la conexión ya cerrada. Una tarea nunca se queda en `en_curso`. El estado de cada
 tarea se guarda también en `runs/<task_id>/task.json`.
+
+El harness (con la API ya levantada) hace, por cada prueba de `pruebas/`: `POST /__reset` del
+escritorio → `POST /tasks` → consulta cada 5 s hasta 5 min → `POST /__check`. Además valida el
+resumen como el evaluador: estado esperado, línea `respuesta:` con el valor correcto, claves de la
+razón y ningún secreto. Imprime una tabla y el % de correctas, los falsos éxitos, p50/p95 de tiempo
+y USD; guarda el detalle en `harness/resultados/<timestamp>.json` y agrega una línea a `NOTAS.md`.
+En Windows usa `127.0.0.1` y no `localhost` (este último intenta primero IPv6 y suma ~2 s).
 
 Cada tarea deja su traza en `runs/<task_id>/`: una captura por paso y `trace.jsonl` con la
 acción, el modelo, la latencia, el costo y los eventos inesperados (sin secretos).
@@ -82,6 +90,7 @@ app/store.py    Tareas en memoria + runs/<task_id>/task.json (estado, resumen, c
 app/worker.py   1 tarea = 1 sesión VNC; lock por escritorio; cierre a 240 s, corte a 270 s
 app/api.py      FastAPI: Bearer en todo, /health, POST /tasks, GET /tasks/{id}
 app/cli.py      Ejecución desde la terminal
+harness/run.py  Pruebas de punta a punta vía la API con /__check y métricas
 ```
 
 Principios: al modelo solo va la última captura más una memoria en texto. Antes de crear o
