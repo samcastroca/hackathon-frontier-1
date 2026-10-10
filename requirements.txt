@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+websockets
+pycryptodome
+pillow
+httpx
+pydantic
+python-dotenv

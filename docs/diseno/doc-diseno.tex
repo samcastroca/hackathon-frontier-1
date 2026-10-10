@@ -1,0 +1,90 @@
+\documentclass[10pt]{extarticle}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[scaled=0.92]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\renewcommand{\ttdefault}{pcr}
+\usepackage[letterpaper,margin=0.45in]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{titlesec}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{multicol}
+\usepackage{microtype}
+
+\definecolor{acento}{HTML}{4B3FC4}
+\definecolor{fondo}{HTML}{F1EEFF}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2pt}
+\setlength{\columnsep}{14pt}
+
+\titleformat{\section}{\color{acento}\bfseries\small\MakeUppercase}{\thesection.}{0.4em}{}
+\titlespacing*{\section}{0pt}{5pt}{2pt}
+\setlist{nosep,leftmargin=12pt}
+\newcommand{\cod}[1]{\texttt{\footnotesize #1}}
+
+\begin{document}
+
+{\Large\bfseries Reto 1 · Agente que opera sistemas sin API}
+
+\section{Problema, supuestos y lo que dejo fuera}
+El agente recibe una tarea en lenguaje natural y un escritorio VNC (navegador en kiosko, 1280×800) con una app de gestión que nunca vio. Tiene 5 min para dejar la app con los cambios correctos y reportar \cod{estado} + \cod{resumen}. Se evalúa sobre otra app y otro escritorio, reseteado antes de cada tarea.
+
+\vspace{2pt}
+{\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}p{2.2cm}p{4.6cm}X@{}}
+\toprule
+\textbf{Tipo de tarea} & \textbf{Caso difícil} & \textbf{Cómo lo resuelve el diseño}\\
+\midrule
+Crear (E1) & Registro duplicado & Buscar antes de crear; el guardrail bloquea si ya existe\\
+Actualizar (E2) & Notas o popups que ``piden'' más cosas & El texto de la app es dato, nunca instrucción; solo el campo pedido\\
+Pregunta (E3) & Paginación, conteo & Filtros y totales de la app; \cod{respuesta: <valor>} en la primera línea\\
+Exportar (E4) & Filtros y fechas exactos & ``Hoy'' se lee de la app; verificar filtros antes de exportar\\
+Debe fallar (E5) & Homónimos, imposible, peligrosa & Más de 1 coincidencia: no tocar y reportar \cod{fallida} con los datos que distinguen\\
+\bottomrule
+\end{tabularx}}
+
+\vspace{2pt}
+\textbf{Supuestos:} las 5 apps son CRUD web parecidas (listas, filtros, formularios, popups); un \cod{fallida} bien explicado vale más que un intento dudoso; el escritorio llega en cada POST y puede cambiar. \textbf{Fuera:} memoria entre tareas (el escritorio llega limpio), flujos hardcodeados de SIGECOM, OCR o visión propios, multiagente.
+
+\section{Arquitectura (ver diagrama)}
+\textbf{API FastAPI} (Bearer; \cod{POST /tasks} responde \cod{task\_id} en menos de 2 s y encola) $\rightarrow$ \textbf{worker asyncio} (1 tarea = 1 sesión VNC, lock por escritorio, reloj) $\rightarrow$ \textbf{agente} con 5 fases: Orientar $\rightarrow$ Localizar $\rightarrow$ Actuar $\rightarrow$ Verificar $\rightarrow$ Reportar $\rightarrow$ \textbf{conector RFB} propio sobre websocket. A los lados: \textbf{model gateway} (OpenRouter), \textbf{guardrails} antes de cualquier acción que confirma, y \textbf{resumen builder} determinista con filtro de secretos. El conector encapsula lo observado: clic con 150 ms entre bajar y soltar, espera de pantalla estable (2 frames iguales, máx. 1,5 s), Ctrl+A antes de escribir.
+
+\section{Decisiones y alternativas descartadas}
+\begin{enumerate}
+\item \textbf{Cliente RFB propio} en vez de Playwright + noVNC: menos capas y control exacto del tiempo de clic y de los frames. Playwright + noVNC queda de respaldo si el handshake toma más de 1 h.
+\item \textbf{VLM barato como modelo principal + escalado a uno fuerte} en vez de usar siempre un modelo de frontera: con USD 45, un modelo fuerte cuesta $\sim$USD 1 por tarea (40 pasos × $\sim$7k tokens) y agota el presupuesto en pruebas. El fuerte entra solo si hay atasco (2 pasos sin cambio), ambigüedad o verificación final. Elijo los modelos midiendo 2--3 candidatos en las 5 pruebas (éxito frente a costo).
+\item \textbf{Solo la última captura + memoria en texto} en vez del historial de capturas: reduce tokens $\sim$4× sin perder contexto.
+\item \textbf{``Localizar antes de actuar'' obligatorio} en vez de dejar que el LLM decida: cubre duplicados, homónimos y objetivos inexistentes, que la rúbrica penaliza como acciones destructivas.
+\item \textbf{\cod{terminada} solo con verificación en pantalla} en vez de confiar en el último clic: el falso éxito cuenta como error; ante la duda, \cod{fallida} con razón.
+\item \textbf{Resumen por plantilla} en vez de texto libre del LLM: garantiza el formato \cod{respuesta:} (número primero, \cod{;} para dos datos) y que nunca salga la contraseña ni el token.
+\item \textbf{Cierre a 4:00 y corte duro a 4:30} en vez de usar los 5 min: lo que el agente haga después cae en la tarea siguiente como acción fuera de la tarea.
+\item \textbf{Un agente} en vez de planificador + ejecutor + crítico: con 5 min y $\sim$5 s por llamada no hay presupuesto para 3 llamadas por paso.
+\item \textbf{VM pequeña siempre encendida} en vez de serverless: las tareas corren minutos en segundo plano.
+\end{enumerate}
+
+\begin{multicols}{2}
+\section{Plan para medir (antes de construir)}
+\begin{itemize}
+\item \textbf{Harness:} \cod{/\_\_reset} $\rightarrow$ \cod{POST /tasks} $\rightarrow$ consulta $\rightarrow$ \cod{/\_\_check} + validador local del estado y del formato del resumen (respuesta, claves de fallo, sin secretos).
+\item \textbf{Set:} 5 pruebas oficiales + $\sim$15 variantes: otros clientes, dos datos, fechas relativas (``ayer''), tareas imposibles o peligrosas.
+\item \textbf{Métricas:} \% correctas · \textbf{tasa de falso éxito} (objetivo 0) · acciones de más · duplicados · tiempo p50/p95 (objetivo p95 < 4:00) · pasos y costo por tarea (objetivo < USD 0,30).
+\item \textbf{Generalización:} prompts sin nombres de pantallas de SIGECOM; revisión de que ninguna regla sea específica.
+\item \textbf{Incidente:} simular cambios (latencia, flujo de login, UI) y medir si el agente lo detecta y lo explica en el resumen.
+\end{itemize}
+
+\columnbreak
+\section{Riesgos y plan del día}
+\begin{itemize}
+\item \textbf{Autenticación VNC y keysyms} (tildes, ñ, \#): es lo primero que construyo y pruebo.
+\item \textbf{Precisión de coordenadas} del modelo barato: herramienta de zoom y escalado al modelo fuerte.
+\item \textbf{Presupuesto:} USD 15 desarrollo, USD 20 reservados para la evaluación, USD 10 de colchón; tope duro de costo por tarea.
+\item \textbf{Equipo de 1:} uso agentes de código y alcance mínimo.
+\end{itemize}
+\textbf{12--14} conector RFB + API · \textbf{14--15:30} bucle del agente + 5 pruebas · \textbf{15:30} incidente · \textbf{16--18} guardrails, variantes, métricas · \textbf{18--19:30} despliegue + video · \textbf{19:30} congelar.
+\end{multicols}
+
+\end{document}
