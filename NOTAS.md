@@ -8,6 +8,7 @@
 | 3 · API + worker | hecha | 2026-10-10 | Vía API: POST /tasks en 6–19 ms; sin token / token malo → 401; id inexistente → 404; cuerpo vacío → 422. E1 pasa (15 pasos, ~70 s, USD 0.0068), E5 `fallida` con las dos cédulas (7 pasos, ~35 s, USD 0.0031). Error de configuración (MODEL_MAIN vacío) → `fallida` con razón, sin colgarse | — |
 | 4 · Harness | hecha | 18:11 | `harness/run.py`. Final: 5/5 correctas, 0 falsos éxitos, p50/p95 60/85 s, USD 0.074 (E3 0.052 por el conteo con sonnet). Detalle abajo | — |
 | 5 · Despliegue | hecha | 18:51 | Railway: https://hackathon-frontier-1-production.up.railway.app. Smoke OK (POST /tasks 114 ms, E1 `terminada` en 75 s). Harness remoto 5/5, 0 falsos éxitos, USD 0.0907 (de los logs). Ver abajo y `docs/DEPLOY.md` | `cloudflared tunnel --url http://localhost:8000` |
+| 8 · Documentación | hecha | 19:05 | README final (cómo correrlo, arquitectura, resultados, limitaciones), INCIDENTE.md completo, revisión de secretos: ningún valor de `.env` en archivos versionados ni en el historial | — |
 
 ## Fase 2 · Comparación de modelos (2026-10-10, 15:35–15:40)
 

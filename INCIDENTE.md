@@ -10,6 +10,10 @@
   un modal "Novedades de la versión 4.2" que avisa: los formularios se aplican sin cerrarse, la
   barra de acciones pasó a la derecha y los botones tienen nombres nuevos (ej. "Aplicar").
   Antes: `docs/incidente/antes.png` (v3.9).
+
+| Antes (v3.9) | Después (v4.2, modal al abrir) |
+| ------------ | ------------------------------ |
+| ![antes](docs/incidente/antes.png) | ![después](docs/incidente/despues.png) |
 - **Impacto medido:** la calibración de coordenadas no cambió (1–2 px de error en los 3
   modelos). El único fallo fue de comportamiento: con haiku-5.5 el formulario quedó abierto tras
   "Aplicar", el modelo creyó que no había guardado, pulsó de nuevo y creó un duplicado (E1 falló
@@ -61,12 +65,20 @@ Fase 2 (2026-10-10, 16:25–16:45, una corrida salvo donde se indica):
 
 \* antes del respaldo de detección de modal en código.
 
-Fase 5 (pendiente): E1–E5 completas en el tema nuevo con el MODEL_MAIN elegido.
+Suite completa E1–E5 en el tema v4.2 con MODEL_MAIN = haiku-5.5 y MODEL_STRONG = sonnet-5.5
+(harness vía API, local, 2026-10-10 18:36):
 
-| Prueba | Modelo | Pasa | Estado | Pasos | Segundos | USD | Eventos registrados |
-| ------ | ------ | ---- | ------ | ----- | -------- | --- | ------------------- |
-| E1 | | | | | | | |
-| E2 | | | | | | | |
-| E3 | | | | | | | |
-| E4 | | | | | | | |
-| E5 | | | | | | | |
+| Prueba | Pasa | Estado | Pasos | Segundos | USD | Eventos registrados |
+| ------ | ---- | ------ | ----- | -------- | --- | ------------------- |
+| E1 | sí | terminada | 17 | 80.4 | 0.0085 | modal |
+| E2 | sí | terminada | 18 | 85.2 | 0.0095 | modal, acción sin efecto visible |
+| E3 | sí (respuesta 45) | terminada | 13 | 90.3 | 0.0653 | modal |
+| E4 | sí | terminada | 12 | 60.2 | 0.0152 | modal |
+| E5 | sí (las dos cédulas) | fallida | 7 | 35.1 | 0.0034 | modal |
+
+Misma suite contra el despliegue en Railway (18:51): 5/5, 0 falsos éxitos, p50/p95 53/134 s,
+USD 0.0907 para las 5. En las 10 tareas el modal de la v4.2 quedó registrado en `eventos:` y se
+cerró sin tocar datos.
+
+Desde el arreglo de la doble confirmación (16:45) ninguna de las corridas del harness (68 tareas)
+dejó un registro duplicado.
